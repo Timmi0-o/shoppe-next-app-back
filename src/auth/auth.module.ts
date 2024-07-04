@@ -9,7 +9,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    JwtModule.register({ secret: 'timmy', signOptions: { expiresIn: '1h' } }),
+    JwtModule.register({ secret: 'timmy', signOptions: { expiresIn: '1d' } }),
     PassportModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
