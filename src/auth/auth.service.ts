@@ -16,7 +16,12 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.userModel.findOne({ username });
     if (!user) {
-      throw new HttpException('Такого пользователя нет', 404);
+      throw new HttpException(
+        {
+          message: 'Такого пользователя нет',
+        },
+        404,
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -35,10 +40,14 @@ export class AuthService {
 
   async userData(token: { token: string }) {
     if (!token.token) {
-      throw new HttpException('Токен отсутствует!', 403);
+      throw new HttpException(
+        {
+          message: 'Токен отсутствует!',
+        },
+        403,
+      );
     }
     console.log(token);
-
     try {
       const userData = await this.jwtService.verify(token.token, {
         secret: 'timmy',
@@ -49,16 +58,32 @@ export class AuthService {
       });
 
       if (!nowUser) {
-        throw new HttpException('Такого пользователя нет', 404);
+        throw new HttpException(
+          {
+            message: 'Такого пользователя нет',
+          },
+
+          404,
+        );
       }
       return nowUser;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
-        console.error('Срок действия токена истек:', error.message);
-        throw new HttpException('Срок действия токена истек', 403);
+        throw new HttpException(
+          {
+            message: 'Срок действия токена истек',
+          },
+
+          403,
+        );
       } else {
-        console.error('Недействительный токен:', error.message);
-        throw new HttpException('Недействительный токен', 403);
+        throw new HttpException(
+          {
+            message: 'Недействительный токен',
+          },
+
+          403,
+        );
       }
     }
   }
@@ -70,7 +95,11 @@ export class AuthService {
 
     if (alreadyUser) {
       return new HttpException(
-        'Такой пользователь уже есть, пожалуйста, войдите в аккаунт!',
+        {
+          message:
+            'Такой пользователь уже есть, пожалуйста, войдите в аккаунт!',
+        },
+
         403,
       );
     }

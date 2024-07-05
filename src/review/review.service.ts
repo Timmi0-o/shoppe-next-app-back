@@ -13,19 +13,14 @@ export class ReviewService {
       product: createReviewDto.product,
       user: createReviewDto.user,
     });
-
+    console.log('isReview', isReview);
     if (isReview) {
       throw new HttpException(
-        'Вы уже оставляли комментарий на этот товар, хотите отредактировать его?',
+        { message: 'Вы уже оставляли комментарий на этот товар' },
         HttpStatus.BAD_REQUEST,
       );
     }
-
     const createdReview = new this.reviewModel(createReviewDto);
-    console.log('------------------------------');
-    console.log(`Отзыв о товаре: ${createdReview}`);
-    console.log('------------------------------');
-
     return createdReview.save();
   }
 
@@ -34,9 +29,13 @@ export class ReviewService {
       .find({ product: id })
       .populate('user')
       .exec();
-    console.log('------------------------------');
-    console.log(`Отзывы о товаре: ${reviews}`);
-    console.log('------------------------------');
     return reviews;
+  }
+
+  async getReviewByUser(idUser: string, idProduct: string) {
+    const review = await this.reviewModel
+      .findOne({ user: idUser, product: idProduct })
+      .exec();
+    return review;
   }
 }

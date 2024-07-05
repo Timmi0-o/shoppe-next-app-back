@@ -24,7 +24,6 @@ export class ProductService {
   }
 
   getProductById(id: string) {
-    console.log(id);
     return this.productModel.findById(id);
   }
 }

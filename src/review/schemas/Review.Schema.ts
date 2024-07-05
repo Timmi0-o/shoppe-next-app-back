@@ -8,7 +8,7 @@ export class Review {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product', unique: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
   product: Product;
 
   @Prop({ required: true, unique: false })

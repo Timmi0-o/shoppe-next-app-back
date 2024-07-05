@@ -24,4 +24,13 @@ export class ReviewController {
   getReviewsByProduct(@Param('id') id: string) {
     return this.reviewService.getReviewsByProduct(id);
   }
+
+  @Get(':idProduct/:idUser')
+  getReviewByUser(
+    @Param('idUser') idUser: string,
+    @Param('idProduct') idProduct: string,
+  ) {
+    console.log('idUser', idUser);
+    return this.reviewService.getReviewByUser(idUser, idProduct);
+  }
 }
