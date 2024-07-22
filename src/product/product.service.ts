@@ -17,9 +17,7 @@ export class ProductService {
   createProduct(createProductDto: CreateProductDto) {
     const newProduct = new this.productModel(createProductDto);
     newProduct.save();
-    console.log('-------------------------');
     console.log(newProduct);
-    console.log('-------------------------');
     return newProduct;
   }
 
