@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
+import { BasketService } from 'src/basket/basket.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { User } from './schemas/User.Schema';
 
@@ -11,9 +12,10 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
+    private basketService: BasketService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUser(username: string, password: string) {
     const user = await this.userModel.findOne({ username });
     if (!user) {
       throw new HttpException(
@@ -29,6 +31,7 @@ export class AuthService {
       const { password, ...result } = user.toObject();
       return result;
     }
+    console.log('Валидация успешна');
     return null;
   }
 
@@ -38,18 +41,12 @@ export class AuthService {
     return { token, user: user.username };
   }
 
-  async userData(token: { token: string }) {
-    if (!token.token) {
-      throw new HttpException(
-        {
-          message: 'Токен отсутствует!',
-        },
-        403,
-      );
+  async userData(token: string) {
+    if (!token) {
+      throw new HttpException({ message: 'Токен отсутствует!' }, 403);
     }
-    console.log(token);
     try {
-      const userData = await this.jwtService.verify(token.token, {
+      const userData = await this.jwtService.verify(token, {
         secret: 'timmy',
       });
 
@@ -58,24 +55,13 @@ export class AuthService {
       });
 
       if (!nowUser) {
-        throw new HttpException(
-          {
-            message: 'Такого пользователя нет',
-          },
-
-          404,
-        );
+        throw new HttpException({ message: 'Такого пользователя нет' }, 404);
       }
-      return nowUser;
+      const { password, ...result } = nowUser.toObject();
+      return result;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
-        throw new HttpException(
-          {
-            message: 'Срок действия токена истек',
-          },
-
-          403,
-        );
+        throw new HttpException({ message: 'Срок действия токена истек' }, 403);
       } else {
         throw new HttpException(
           {
@@ -99,11 +85,9 @@ export class AuthService {
           message:
             'Такой пользователь уже есть, пожалуйста, войдите в аккаунт!',
         },
-
         403,
       );
     }
-
     const hashedPassword = await bcrypt.hash(createUserDto.password, 7);
 
     const newUser = new this.userModel({
@@ -111,11 +95,15 @@ export class AuthService {
       password: hashedPassword,
     });
     console.log('Успешная регистрация');
-    newUser.save();
-    const user = {
-      username: createUserDto.username,
-      id: newUser._id,
-    };
-    return this.loginUser(user);
+
+    await newUser.save();
+    return await this.basketService.createBasket(newUser._id.toString());
+
+    // const user = {
+    //   username: createUserDto.username,
+    //   id: newUser._id,
+    // };
+
+    // return this.loginUser(user);
   }
 }

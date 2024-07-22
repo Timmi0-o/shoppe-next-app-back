@@ -30,7 +30,6 @@ export class ReviewController {
     @Param('idUser') idUser: string,
     @Param('idProduct') idProduct: string,
   ) {
-    console.log('idUser', idUser);
     return this.reviewService.getReviewByUser(idUser, idProduct);
   }
 }

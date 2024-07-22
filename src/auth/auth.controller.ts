@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -15,14 +17,14 @@ import { LocalAuthGuard } from './guards/local.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
+  @UseGuards(LocalAuthGuard)
+  async login(@Request() req: any) {
     return this.authService.loginUser(req.user);
   }
 
-  @Post()
-  async getUserData(@Body() token: { token: string }) {
+  @Get(':token')
+  async getUserData(@Param('token') token: string) {
     return this.authService.userData(token);
   }
 

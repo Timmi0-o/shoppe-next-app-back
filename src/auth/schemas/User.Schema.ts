@@ -1,6 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
-import { Review } from 'src/review/schemas/Review.Schema';
 
 @Schema()
 export class User {
@@ -15,9 +13,6 @@ export class User {
 
   @Prop({ required: true, unique: true })
   email: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, required: false })
-  review?: Review;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

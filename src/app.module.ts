@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { BasketModule } from './basket/basket.module';
 import { ProductModule } from './product/product.module';
 import { ReviewModule } from './review/review.module';
 
@@ -17,9 +18,8 @@ import { ReviewModule } from './review/review.module';
     ConfigModule.forRoot({ envFilePath: '.env' }),
     ProductModule,
     ReviewModule,
+    BasketModule,
     AuthModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
