@@ -12,7 +12,6 @@ import { ReviewModule } from './review/review.module';
       'mongodb+srv://Timmi:RieBcYaEwEbhgUQi@cluster0.aie9jx7.mongodb.net/shoppe',
       {
         tls: true,
-        tlsInsecure: true, // Только для отладки, не используйте в продакшене
       },
     ),
     ConfigModule.forRoot({ envFilePath: '.env' }),

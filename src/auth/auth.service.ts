@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { BasketService } from '../basket/basket.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
-import { User } from './schemas/User.schema';
+import { User } from './schemas/User.Schema';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +28,7 @@ export class AuthService {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (user && isPasswordValid) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user.toObject();
       return result;
     }
@@ -57,6 +58,7 @@ export class AuthService {
       if (!nowUser) {
         throw new HttpException({ message: 'Такого пользователя нет' }, 404);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = nowUser.toObject();
       return result;
     } catch (error) {
