@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/auth/schemas/User.Schema';
-import { Product, ProductSchema } from 'src/product/schemas/Product.Schema';
+import { User, UserSchema } from 'src/auth/schemas/User.schema';
+import { Product, ProductSchema } from 'src/product/schemas/Product.schema';
 import { BasketController } from './basket.controller';
 import { BasketService } from './basket.service';
-import { Basket, BasketSchema } from './schemas/Basket.Schema';
+import { Basket, BasketSchema } from './schemas/Basket.schema';
 
 @Module({
   imports: [

@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { BasketService } from '../basket/basket.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
-import { User } from './schemas/User.Schema';
+import { User } from './schemas/User.schema';
 
 @Injectable()
 export class AuthService {

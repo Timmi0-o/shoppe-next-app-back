@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Basket } from './schemas/Basket.Schema';
-import { User } from 'src/auth/schemas/User.Schema';
-import { Product } from 'src/product/schemas/Product.Schema';
+import { User } from 'src/auth/schemas/User.schema';
+import { Product } from 'src/product/schemas/Product.schema';
 import { CreateBasketDto } from './dtos/CreateBasket.dto';
 import { DeleteProductToBasketDto } from './dtos/DeleteProductToBasket.dto';
+import { Basket } from './schemas/Basket.schema';
 
 @Injectable()
 export class BasketService {
