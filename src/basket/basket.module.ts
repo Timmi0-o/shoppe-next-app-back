@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/auth/schemas/User.Schema';
-import { Product, ProductSchema } from 'src/product/schemas/Product.schema';
+import { User, UserSchema } from '../auth/schemas/User.Schema';
+import { Product, ProductSchema } from '../product/schemas/Product.schema';
 import { BasketController } from './basket.controller';
 import { BasketService } from './basket.service';
 import { Basket, BasketSchema } from './schemas/Basket.schema';
