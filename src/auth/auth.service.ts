@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import { BasketService } from 'src/basket/basket.service';
+import { BasketService } from '../basket/basket.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { User } from './schemas/User.Schema';
 

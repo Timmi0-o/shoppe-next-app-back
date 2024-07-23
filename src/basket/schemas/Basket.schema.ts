@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { User } from 'src/auth/schemas/User.Schema';
-import { ProductItem, ProductItemSchema } from './ProductItem.schema';
+import { ProductItem, ProductItemSchema } from './ProductItem.Schema';
 
 @Schema()
 export class Basket {
