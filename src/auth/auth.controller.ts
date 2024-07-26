@@ -20,7 +20,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(@Request() req: any) {
-    return this.authService.loginUser(req.user);
+    return this.authService.loginUser(req, req.user);
   }
 
   @Get(':token')

@@ -155,4 +155,32 @@ export class BasketService {
       console.log(error);
     }
   }
+
+  async findProductInBasketById(idProduct: string, idUser: string) {
+    const user = await this.userModel.findOne({ _id: idUser }).exec();
+    if (!user) {
+      throw new HttpException(
+        'We is not login (no user)!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const basket = await this.basketModel.find({ user: user._id }).exec();
+    if (!basket) {
+      throw new HttpException('Basket is not found!', HttpStatus.BAD_REQUEST);
+    }
+
+    const productInBasket = await this.basketModel
+      .findOne({
+        user: idUser,
+        products: { $elemMatch: { productId: idProduct } },
+      })
+      .exec();
+
+    if (!productInBasket) {
+      throw new HttpException('Product not found!', HttpStatus.BAD_REQUEST);
+    }
+    console.log('productInBasket', productInBasket);
+    return productInBasket;
+  }
 }

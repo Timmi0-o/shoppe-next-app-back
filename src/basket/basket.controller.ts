@@ -21,4 +21,12 @@ export class BasketController {
   deleteProductToBasket(@Body() deleteProduct: DeleteProductToBasketDto) {
     return this.basketService.deleteProductToBasket(deleteProduct);
   }
+
+  @Get(':idProduct/:idUser')
+  findProductInBasketByID(
+    @Param('idProduct') idProduct: string,
+    @Param('idUser') idUser: string,
+  ) {
+    return this.basketService.findProductInBasketById(idProduct, idUser);
+  }
 }

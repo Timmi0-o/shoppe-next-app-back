@@ -5,10 +5,7 @@ async function bootstrap() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  await app.listen(PORT, () =>
-    console.log(
-      `---------------------------------\nСЕРВЕР РАБОТАЕТ НА ПОРТУ ${PORT}\n--------------------------------`,
-    ),
-  );
+
+  await app.listen(PORT, () => console.log(`СЕРВЕР РАБОТАЕТ НА ПОРТУ ${PORT}`));
 }
 bootstrap();

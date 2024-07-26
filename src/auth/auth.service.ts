@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
+import { Request } from 'express';
 import { Model } from 'mongoose';
 import { BasketService } from '../basket/basket.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
@@ -25,7 +26,6 @@ export class AuthService {
         404,
       );
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (user && isPasswordValid) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,10 +36,10 @@ export class AuthService {
     return null;
   }
 
-  async loginUser(user: any) {
+  async loginUser(req: Request, user: any) {
     const payload = { username: user.username, id: user._id };
     const token = this.jwtService.sign(payload);
-    return { token, user: user.username };
+    return { token, user };
   }
 
   async userData(token: string) {
@@ -51,16 +51,18 @@ export class AuthService {
         secret: 'timmy',
       });
 
-      const nowUser = await this.userModel.findOne({
-        username: userData.username,
-      });
+      if (userData) {
+        const nowUser = await this.userModel.findOne({
+          username: userData.username,
+        });
 
-      if (!nowUser) {
-        throw new HttpException({ message: 'Такого пользователя нет' }, 404);
+        if (!nowUser) {
+          throw new HttpException({ message: 'Такого пользователя нет' }, 404);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...result } = nowUser.toObject();
+        return result;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = nowUser.toObject();
-      return result;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         throw new HttpException({ message: 'Срок действия токена истек' }, 403);
@@ -100,12 +102,5 @@ export class AuthService {
 
     await newUser.save();
     return await this.basketService.createBasket(newUser._id.toString());
-
-    // const user = {
-    //   username: createUserDto.username,
-    //   id: newUser._id,
-    // };
-
-    // return this.loginUser(user);
   }
 }
