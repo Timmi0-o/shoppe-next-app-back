@@ -15,6 +15,7 @@ export class BasketService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
+  // CREATE BASKET (IN LOGIN USER)
   async createBasket(userId: string) {
     try {
       // ПРОВЕРКА НАЛИЧИЯ ПОЛЬЗОВАТЕЛЯ
@@ -31,6 +32,7 @@ export class BasketService {
     }
   }
 
+  // GET FULL BASKET
   async getBasket(userId: string) {
     try {
       if (!userId) {
@@ -48,41 +50,60 @@ export class BasketService {
         );
       }
 
+      if (userBasket?.products.length < 1) {
+        throw new HttpException(
+          'Array products is empty',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       // Извлечение массивов productId из корзины
-      const productIds = userBasket.products.map(
+      const productId = userBasket?.products.map(
         (productItem) => productItem.productId,
       );
+      console.log('productId', productId);
 
       // Извлечение массивов qty из корзины
-      const qtyProduct = userBasket.products.map(
+      const qtyProduct = userBasket?.products.map(
         (productItem) => productItem.qty,
       );
+      console.log('qtyProduct', qtyProduct);
 
       // Получение всех товаров по их id
       const fullProducts = await this.productModel
-        .find({ _id: { $in: productIds } })
+        .aggregate([
+          {
+            $match: { _id: { $in: productId } },
+          },
+          {
+            $addFields: {
+              productIdOrder: {
+                $indexOfArray: [productId, '$_id'],
+              },
+            },
+          },
+          {
+            $sort: { productIdOrder: 1 },
+          },
+        ])
         .exec();
 
       // ПОЛНЫЕ ДАННЫЕ О ТОВАРАХ
       const fullProductDetails = [];
-      for (let i: number = 0; i < fullProducts.length; i++) {
-        fullProductDetails.push({
+      for (let i: number = 0; i < productId.length; i++) {
+        fullProductDetails[i] = {
           product: fullProducts[i],
           qty: qtyProduct[i],
-        });
+        };
       }
-
-      const basketData = {
-        user: userBasket.user,
-        products: fullProductDetails,
-      };
-
-      return basketData;
+      // console.log('fullProductDetails', fullProductDetails);
+      return fullProductDetails;
     } catch (error) {
       throw error;
     }
   }
 
+  // ADD PRODUCT IN BASKET
   async addProductToBasket(createBasketDto: CreateBasketDto) {
     try {
       // ПРОВЕРКА НАЛИЧИЯ ПОЛЬЗОВАТЕЛЯ И ТАКОГО ТОВАРА
@@ -118,22 +139,22 @@ export class BasketService {
           'Product already added!',
           HttpStatus.BAD_REQUEST,
         );
-      } else {
-        // ДОБАВЛЕНИЕ К УЖЕ СУЩ. КОРЗИНЫ ТОВАР
-        const updateBasket = await this.basketModel
-          .updateOne(
-            { user: user._id },
-            { $addToSet: { products: createBasketDto.product } },
-          )
-          .exec();
-
-        return updateBasket;
       }
+      // ДОБАВЛЕНИЕ К УЖЕ СУЩ. КОРЗИНЕ ТОВАР
+      const updateBasket = await this.basketModel
+        .updateOne(
+          { user: user._id },
+          { $addToSet: { products: createBasketDto.product } },
+        )
+        .exec();
+
+      return updateBasket;
     } catch (error) {
       throw error;
     }
   }
 
+  // DELETE PRODUCT IN BASKET
   async deleteProductToBasket(deleteProduct: DeleteProductToBasketDto) {
     try {
       const user = await this.userModel
@@ -156,31 +177,53 @@ export class BasketService {
     }
   }
 
+  // FIND PRODUCT IN BASKET BY PRODUCT ID
   async findProductInBasketById(idProduct: string, idUser: string) {
-    const user = await this.userModel.findOne({ _id: idUser }).exec();
-    if (!user) {
+    if (!idProduct || !idUser) {
       throw new HttpException(
-        'We is not login (no user)!',
+        'idProduct or idUser is null',
         HttpStatus.BAD_REQUEST,
       );
     }
+    try {
+      const user = await this.userModel.findOne({ _id: idUser }).exec();
+      if (!user) {
+        throw new HttpException(
+          'We is not login (no user)!',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const product = await this.productModel
+        .findOne({ _id: idProduct })
+        .exec();
+      if (!product) {
+        throw new HttpException('Product not found!', HttpStatus.BAD_REQUEST);
+      }
 
-    const basket = await this.basketModel.find({ user: user._id }).exec();
-    if (!basket) {
-      throw new HttpException('Basket is not found!', HttpStatus.BAD_REQUEST);
+      const basket = await this.basketModel.find({ user: user._id }).exec();
+      if (!basket) {
+        throw new HttpException('Basket is not found!', HttpStatus.BAD_REQUEST);
+      }
+
+      const productInBasket = await this.basketModel
+        .findOne({
+          user: idUser,
+          products: { $elemMatch: { productId: idProduct } },
+        })
+        .exec();
+
+      if (!productInBasket?.products.length) {
+        throw new HttpException(
+          'Product is not in the basket!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const finishProduct = productInBasket?.products.filter(
+        (product) => product.productId.toString() === idProduct,
+      )[0];
+      return finishProduct;
+    } catch (error) {
+      throw error;
     }
-
-    const productInBasket = await this.basketModel
-      .findOne({
-        user: idUser,
-        products: { $elemMatch: { productId: idProduct } },
-      })
-      .exec();
-
-    if (!productInBasket) {
-      throw new HttpException('Product not found!', HttpStatus.BAD_REQUEST);
-    }
-    console.log('productInBasket', productInBasket);
-    return productInBasket;
   }
 }
