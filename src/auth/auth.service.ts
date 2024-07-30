@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
 import { Model } from 'mongoose';
+import { OrderService } from 'src/order/order.service';
 import { BasketService } from '../basket/basket.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { User } from './schemas/User.Schema';
@@ -14,6 +15,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
     private basketService: BasketService,
+    private orderService: OrderService,
   ) {}
 
   async validateUser(username: string, password: string) {
@@ -101,6 +103,7 @@ export class AuthService {
     console.log('Успешная регистрация');
 
     await newUser.save();
-    return await this.basketService.createBasket(newUser._id.toString());
+    await this.basketService.createBasket(newUser._id.toString());
+    return await this.orderService.createOrder(newUser._id.toString());
   }
 }

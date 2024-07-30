@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ProductSetting } from './ProductSetting.Schema';
 
 @Schema()
 export class Product {
@@ -19,6 +20,9 @@ export class Product {
 
   @Prop()
   additionalImg?: string[];
+
+  @Prop({ type: ProductSetting })
+  setting?: ProductSetting;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

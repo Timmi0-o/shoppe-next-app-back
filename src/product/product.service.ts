@@ -14,8 +14,8 @@ export class ProductService {
     return await this.productModel.find().exec();
   }
 
-  async createProduct(createProductDto: CreateProductDto) {
-    const newProduct = await new this.productModel(createProductDto);
+  createProduct(createProductDto: CreateProductDto) {
+    const newProduct = new this.productModel(createProductDto);
     newProduct.save();
     console.log(newProduct);
     return newProduct;

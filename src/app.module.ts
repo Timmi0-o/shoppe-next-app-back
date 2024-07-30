@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { BasketModule } from './basket/basket.module';
 
+import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { ReviewModule } from './review/review.module';
 
@@ -20,6 +21,7 @@ import { ReviewModule } from './review/review.module';
     ReviewModule,
     BasketModule,
     AuthModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

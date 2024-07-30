@@ -118,7 +118,7 @@ export class BasketService {
         .exec();
 
       if (!user) {
-        throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
+        throw new HttpException('No login!', HttpStatus.METHOD_NOT_ALLOWED);
       }
       if (!product) {
         throw new HttpException('Product not found!', HttpStatus.NOT_FOUND);

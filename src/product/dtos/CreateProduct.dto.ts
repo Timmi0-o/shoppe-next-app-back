@@ -1,4 +1,6 @@
+import { Type } from 'class-transformer';
 import { IsOptional, IsString } from 'class-validator';
+import { ProductSettingDto } from './ProductSetting.dto';
 
 export class CreateProductDto {
   @IsString()
@@ -12,4 +14,8 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   fullDescription?: string;
+
+  @IsOptional()
+  @Type(() => ProductSettingDto)
+  action: ProductSettingDto;
 }
