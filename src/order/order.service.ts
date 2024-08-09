@@ -90,14 +90,14 @@ export class OrderService {
 
   // ADDED ORDER
   async addOrder(createOrderDto: CreateOrderDto) {
+    console.log('createOrderDto', createOrderDto);
     try {
       const user = await this.userModel
         .findOne({ _id: createOrderDto.user })
         .exec();
       if (!user) {
-        throw new HttpException('No login!', HttpStatus.METHOD_NOT_ALLOWED);
+        throw new HttpException('No login!', HttpStatus.UNAUTHORIZED);
       }
-
       if (createOrderDto.productList.length < 1) {
         throw new HttpException('Products not found!', HttpStatus.NO_CONTENT);
       }
@@ -114,16 +114,16 @@ export class OrderService {
       console.log('newOrderData', newOrderData);
 
       // Добавление заказа в массив orders пользователя
-      const newOrder = await this.orderModel
+      await this.orderModel
         .updateOne(
           { user: createOrderDto.user },
           { $push: { orders: newOrderData } },
         )
         .exec();
 
-      return newOrder;
+      return number;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 }

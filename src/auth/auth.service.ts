@@ -100,6 +100,7 @@ export class AuthService {
       ...createUserDto,
       password: hashedPassword,
     });
+
     console.log('Успешная регистрация');
 
     await newUser.save();

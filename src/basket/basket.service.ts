@@ -36,8 +36,10 @@ export class BasketService {
   async getBasket(userId: string) {
     try {
       if (!userId) {
-        console.log('User is null');
-        throw new HttpException('User is null', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'No login! (not user)',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
       const userBasket = await this.basketModel
         .findOne({ user: userId })
@@ -61,13 +63,11 @@ export class BasketService {
       const productId = userBasket?.products.map(
         (productItem) => productItem.productId,
       );
-      console.log('productId', productId);
 
       // Извлечение массивов qty из корзины
       const qtyProduct = userBasket?.products.map(
         (productItem) => productItem.qty,
       );
-      console.log('qtyProduct', qtyProduct);
 
       // Получение всех товаров по их id
       const fullProducts = await this.productModel
@@ -224,6 +224,22 @@ export class BasketService {
       return finishProduct;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async clearBasket(idUser: string) {
+    try {
+      if (!idUser) {
+        throw new HttpException(
+          'No login! (not user)',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      return await this.basketModel
+        .updateOne({ user: idUser }, { products: [] })
+        .exec();
+    } catch (error) {
+      console.log(error);
     }
   }
 }

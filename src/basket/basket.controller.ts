@@ -29,4 +29,9 @@ export class BasketController {
   ) {
     return this.basketService.findProductInBasketById(idProduct, idUser);
   }
+
+  @Patch('clear/:idUser')
+  clearBasket(@Param('idUser') idUser: string) {
+    return this.basketService.clearBasket(idUser);
+  }
 }
